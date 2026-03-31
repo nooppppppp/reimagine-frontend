@@ -322,7 +322,7 @@ export function StyleSelection() {
           clearInterval(progressIntervalRef.current!);
           return 90;
         }
-        return prev + 0.75;
+        return prev + 1.2;
       });
     }, 1000);
 
