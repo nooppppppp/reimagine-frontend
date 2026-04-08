@@ -897,7 +897,7 @@ export function StyleSelection() {
                   </div>
                   <div className="flex justify-between items-center mt-2">
                     <p className="text-[14px] text-stone-600">Generating your design...</p>
-                    <p className="text-[14px] text-stone-600">{progress}%</p>
+                    <p className="text-[14px] text-stone-600">{Math.round(progress)}%</p>
                   </div>
                 </div>
 
