@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { generateDesign } from '../api';
+import { useLanguage } from '../context/LanguageContext';
 
 interface StyleSelectionPrefill {
   generatedImageUrl?: string;
@@ -136,6 +137,7 @@ const roomTypes = [
 export function StyleSelection() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, lang, toggleLang } = useLanguage();
   const prefill = location.state as StyleSelectionPrefill | null;
 
   const [projectName, setProjectName] = useState(prefill?.projectName ?? '');
@@ -285,14 +287,14 @@ export function StyleSelection() {
     let hasValidationError = false;
 
     if (!roomImage && !roomPreview) {
-      setRoomImageError('Please upload a room image to continue');
+      setRoomImageError(t('style_roomImageError'));
       hasValidationError = true;
     } else {
       setRoomImageError('');
     }
 
     if (!privacyConsent) {
-      setConsentError('You must agree before generating a design');
+      setConsentError(t('style_consentError'));
       hasValidationError = true;
     } else {
       setConsentError('');
@@ -338,7 +340,7 @@ export function StyleSelection() {
         resolvedRoomImage = new File([blob], 'room.png', { type: blob.type });
       } catch {
         clearInterval(progressIntervalRef.current!);
-        setRoomImageError('Failed to load room image. Please re-upload.');
+        setRoomImageError(t('style_roomImageFetchError'));
         setLoadingStage(null);
         return;
       }
@@ -424,7 +426,7 @@ export function StyleSelection() {
               <Home className="w-5 h-5" />
             </button>
             <div className="h-6 w-px bg-stone-300"></div>
-            <h1 className="text-xl text-stone-900">Design Your Room</h1>
+            <h1 className="text-xl text-stone-900">{t('style_title')}</h1>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -432,7 +434,13 @@ export function StyleSelection() {
               className="flex items-center gap-2 px-4 py-2 text-stone-700 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
             >
               <FolderOpen className="w-5 h-5" />
-              <span>My Projects</span>
+              <span>{t('nav_myProjects')}</span>
+            </button>
+            <button
+              onClick={toggleLang}
+              className="flex items-center gap-1.5 px-3 py-1.5 border border-stone-300 rounded-lg text-sm text-stone-600 hover:text-stone-900 hover:border-stone-400 hover:bg-stone-50 transition-colors"
+            >
+              {lang === 'en' ? 'TH' : 'EN'}
             </button>
           </div>
         </div>
@@ -443,21 +451,21 @@ export function StyleSelection() {
         <div className="space-y-6">
           {/* Upload Section */}
           <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-[22px] text-stone-900 mb-6">Upload Your Room</h2>
+            <h2 className="text-[22px] text-stone-900 mb-6">{t('style_uploadSection')}</h2>
 
 
             <div className="grid md:grid-cols-2 gap-6">
               {/* Project Name */}
               <div className="md:col-span-2 space-y-2">
                 <label htmlFor="projectName" className="block text-[15px] text-stone-700">
-                  Project Name
+                  {t('style_projectName')}
                 </label>
                 <input
                   id="projectName"
                   type="text"
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
-                  placeholder="e.g., Living Room Makeover"
+                  placeholder={t('style_projectNamePlaceholder')}
                   className="w-full px-4 py-2.5 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent text-[13px] placeholder:text-[13px]"
                 />
               </div>
@@ -465,7 +473,7 @@ export function StyleSelection() {
               {/* Room Image Upload - Compact */}
               <div ref={roomUploadRef} className="space-y-2">
                 <label className="block text-[15px] text-stone-700">
-                  Room Image <span className="text-red-500">*</span>
+                  {t('style_roomImage')} <span className="text-red-500">*</span>
                 </label>
                 {!roomPreview ? (
                   <div
@@ -479,7 +487,7 @@ export function StyleSelection() {
                     }`}
                   >
                     <CloudUpload className="w-8 h-8 text-stone-400 mx-auto mb-2" />
-                    <p className="text-[13px] text-stone-600">Drag & drop or click</p>
+                    <p className="text-[13px] text-stone-600">{t('style_dragDrop')}</p>
                     <input
                       ref={roomInputRef}
                       type="file"
@@ -511,7 +519,7 @@ export function StyleSelection() {
               {/* Inspiration Image Upload - Compact */}
               <div className="space-y-2">
                 <label className="block text-[15px] text-stone-700">
-                  Inspiration Image
+                  {t('style_inspirationImage')}
                 </label>
                 {!inspirationPreview ? (
                   <div
@@ -521,7 +529,7 @@ export function StyleSelection() {
                     className="border-2 border-dashed border-stone-300 rounded-xl p-6 text-center cursor-pointer hover:border-stone-400 hover:bg-stone-50 transition-colors"
                   >
                     <CloudUpload className="w-8 h-8 text-stone-400 mx-auto mb-2" />
-                    <p className="text-[13px] text-stone-600">Drag & drop or click</p>
+                    <p className="text-[13px] text-stone-600">{t('style_dragDrop')}</p>
                     <input
                       ref={inspirationInputRef}
                       type="file"
@@ -559,7 +567,7 @@ export function StyleSelection() {
                     }`}
                   />
                   <span className="text-sm text-stone-700">
-                    I agree that my uploaded images will only be processed temporarily.
+                    {t('style_privacyConsent')}
                     <span className="text-red-500 ml-1">*</span>
                   </span>
                 </label>
@@ -574,10 +582,10 @@ export function StyleSelection() {
               {/* Upload Requirements */}
               <div className="md:col-span-2">
                 <div className="bg-stone-50 rounded-xl p-4 text-sm text-stone-600">
-                  <p className="font-medium text-stone-800 mb-2">Upload Requirements:</p>
+                  <p className="font-medium text-stone-800 mb-2">{t('style_uploadReqTitle')}</p>
                   <ul className="space-y-1 list-disc list-inside">
-                    <li>Your current room photo (clear, well-lit)</li>
-<li>Both images should be in JPG, PNG, or WebP format</li>
+                    <li>{t('style_uploadReq1')}</li>
+                    <li>{t('style_uploadReq2')}</li>
                   </ul>
                 </div>
               </div>
@@ -596,8 +604,8 @@ export function StyleSelection() {
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-stone-400">
                   <CloudUpload className="w-12 h-12" />
-                  <p className="text-[15px]">Your room preview will appear here</p>
-                  <p className="text-[13px]">Upload a room image above to get started</p>
+                  <p className="text-[15px]">{t('style_previewPlaceholder')}</p>
+                  <p className="text-[13px]">{t('style_previewSubtitle')}</p>
                 </div>
               )}
             </div>
@@ -605,28 +613,28 @@ export function StyleSelection() {
 
           {/* Design Preferences */}
           <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-[22px] text-stone-900 mb-6">Design Preferences</h2>
+            <h2 className="text-[22px] text-stone-900 mb-6">{t('style_designPreferences')}</h2>
             <div className="grid md:grid-cols-3 gap-6">
               <Combobox
-                label="Style"
+                label={t('style_styleLabel')}
                 value={selectedStyle}
                 onChange={(value) => setSelectedStyle(value)}
                 options={styles}
-                placeholder="Select a style"
+                placeholder={t('style_styleSelectPlaceholder')}
               />
               <Combobox
-                label="Color Tone"
+                label={t('style_colorToneLabel')}
                 value={selectedColorTone}
                 onChange={(value) => setSelectedColorTone(value)}
                 options={colorTones}
-                placeholder="Select a color tone"
+                placeholder={t('style_colorToneSelectPlaceholder')}
               />
               <Combobox
-                label="Room Type"
+                label={t('style_roomTypeLabel')}
                 value={selectedRoomType}
                 onChange={(value) => setSelectedRoomType(value)}
                 options={roomTypes}
-                placeholder="Select a room type"
+                placeholder={t('style_roomTypeSelectPlaceholder')}
               />
             </div>
           </div>
@@ -635,12 +643,12 @@ export function StyleSelection() {
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             {/* Header */}
             <div className="border-b border-stone-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-[22px] text-stone-900">Remove Existing Furniture</h2>
+              <h2 className="text-[22px] text-stone-900">{t('style_removeExisting')}</h2>
               <button
                 onClick={() => setRemovedFurniture([])}
                 className="text-[14px] text-stone-600 hover:text-stone-900 px-4 py-2 hover:bg-stone-50 rounded-lg transition-colors whitespace-nowrap"
               >
-                Clear All
+                {t('style_clearAll')}
               </button>
             </div>
 
@@ -669,7 +677,7 @@ export function StyleSelection() {
             {/* Remove Input */}
             <div className="px-6 pt-4 pb-6">
               <label className="block text-[15px] text-stone-700 mb-2">
-                Type furniture to remove
+                {t('style_typeFurnitureToRemove')}
               </label>
               <div className="flex gap-2">
                 <input
@@ -677,7 +685,7 @@ export function StyleSelection() {
                   value={removeFurnitureInput}
                   onChange={(e) => setRemoveFurnitureInput(e.target.value)}
                   onKeyDown={handleRemoveFurnitureKeyDown}
-                  placeholder="Type furniture to remove and press Enter"
+                  placeholder={t('style_typeFurnitureToRemovePlaceholder')}
                   className="flex-1 px-4 py-2.5 border-2 border-stone-300 rounded-xl focus:outline-none focus:border-stone-400 transition-colors text-[15px] placeholder:text-[13px] placeholder:text-stone-400"
                 />
                 <button
@@ -685,7 +693,7 @@ export function StyleSelection() {
                   className="bg-stone-800 text-white px-6 py-2.5 rounded-xl hover:bg-stone-700 transition-colors flex items-center justify-center gap-2 text-[14px] w-32"
                 >
                   <X className="w-4 h-4" />
-                  Remove
+                  {t('style_removeButton')}
                 </button>
               </div>
             </div>
@@ -695,12 +703,12 @@ export function StyleSelection() {
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             {/* Header */}
             <div className="border-b border-stone-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-[22px] text-stone-900">Add Custom Furniture</h2>
+              <h2 className="text-[22px] text-stone-900">{t('style_addCustom')}</h2>
               <button
                 onClick={() => setSelectedFurniture([])}
                 className="text-[14px] text-stone-600 hover:text-stone-900 px-4 py-2 hover:bg-stone-50 rounded-lg transition-colors whitespace-nowrap"
               >
-                Clear All
+                {t('style_clearAll')}
               </button>
             </div>
 
@@ -750,7 +758,7 @@ export function StyleSelection() {
             {/* Add Custom Furniture Input */}
             <div className="px-6 pt-4 pb-2">
               <label className="block text-[15px] text-stone-700 mb-2">
-                Type furniture to add
+                {t('style_typeFurnitureToAdd')}
               </label>
               <div className="flex gap-2">
                 <input
@@ -758,7 +766,7 @@ export function StyleSelection() {
                   value={customFurnitureInput}
                   onChange={(e) => setCustomFurnitureInput(e.target.value)}
                   onKeyDown={handleCustomFurnitureKeyDown}
-                  placeholder="Type furniture name and press Enter"
+                  placeholder={t('style_typeFurnitureToAddPlaceholder')}
                   className="flex-1 px-4 py-2.5 border-2 border-stone-300 rounded-xl focus:outline-none focus:border-stone-400 transition-colors text-[15px] placeholder:text-[13px] placeholder:text-stone-400"
                 />
                 <button
@@ -766,7 +774,7 @@ export function StyleSelection() {
                   className="bg-stone-800 text-white px-6 py-2.5 rounded-xl hover:bg-stone-700 transition-colors flex items-center justify-center gap-2 text-[14px] w-32"
                 >
                   <Plus className="w-4 h-4" />
-                  Add
+                  {t('style_addButton')}
                 </button>
               </div>
             </div>
@@ -827,9 +835,9 @@ export function StyleSelection() {
           {/* Generate New Design Button */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="text-center mb-6">
-              <h2 className="text-[22px] text-stone-900 mb-2">Ready to Transform Your Room?</h2>
+              <h2 className="text-[22px] text-stone-900 mb-2">{t('style_readyTitle')}</h2>
               <p className="text-[15px] text-stone-600">
-                Click below to generate your personalized AI-powered interior design
+                {t('style_readySubtitle')}
               </p>
             </div>
             <div className={`grid gap-3 ${prefill?.generatedImageUrl ? 'grid-cols-2' : 'grid-cols-1'}`}>
@@ -851,7 +859,7 @@ export function StyleSelection() {
                   })}
                   className="w-full border-2 border-stone-300 text-stone-700 px-8 py-4 rounded-xl hover:border-stone-400 hover:bg-stone-50 transition-colors flex items-center justify-center gap-2 text-[16px]"
                 >
-                  Cancel
+                  {t('style_cancelButton')}
                 </button>
               )}
               <button
@@ -859,7 +867,7 @@ export function StyleSelection() {
                 className="w-full bg-stone-800 text-white px-8 py-4 rounded-xl hover:bg-stone-700 transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-[16px]"
               >
                 <Sparkles className="w-5 h-5" />
-                Generate New Design
+                {t('style_generateButton')}
               </button>
             </div>
           </div>
@@ -874,12 +882,12 @@ export function StyleSelection() {
               <>
                 {/* Title */}
                 <h2 className="text-[24px] text-stone-900 text-center mb-2">
-                  Analyzing Your Room
+                  {t('style_loadingTitle')}
                 </h2>
 
                 {/* Subtext */}
                 <p className="text-[15px] text-stone-600 text-center mb-8">
-                  Our AI is generating your personalized interior design.
+                  {t('style_loadingSubtitle')}
                 </p>
 
                 {/* Animated Loading Icon */}
@@ -896,7 +904,7 @@ export function StyleSelection() {
                     />
                   </div>
                   <div className="flex justify-between items-center mt-2">
-                    <p className="text-[14px] text-stone-600">Generating your design...</p>
+                    <p className="text-[14px] text-stone-600">{t('style_generatingText')}</p>
                     <p className="text-[14px] text-stone-600">{Math.round(progress)}%</p>
                   </div>
                 </div>
@@ -904,7 +912,7 @@ export function StyleSelection() {
 
                 {/* Estimated Time */}
                 <p className="text-[13px] text-stone-500 text-center mb-6">
-                  Estimated time: ~2-3 minutes
+                  {t('style_estimatedTime')}
                 </p>
 
                 {/* Cancel Button */}
@@ -912,7 +920,7 @@ export function StyleSelection() {
                   onClick={handleCancelGeneration}
                   className="w-full px-4 py-3 border-2 border-stone-300 text-stone-700 rounded-xl hover:border-stone-400 hover:bg-stone-50 transition-colors text-[15px]"
                 >
-                  Cancel
+                  {t('style_loadingCancel')}
                 </button>
               </>
             ) : (
@@ -923,16 +931,16 @@ export function StyleSelection() {
                     <X className="w-8 h-8 text-red-600" />
                   </div>
                   <h2 className="text-[24px] text-stone-900 mb-2">
-                    Processing Failed
+                    {t('style_errorTitle')}
                   </h2>
                   <p className="text-[15px] text-stone-600 mb-6">
-                    We encountered an error while generating your design. Please try again.
+                    {t('style_errorDesc')}
                   </p>
                   <button
                     onClick={handleCancelGeneration}
                     className="w-full px-4 py-3 bg-stone-800 text-white rounded-xl hover:bg-stone-700 transition-colors text-[15px]"
                   >
-                    Try Again
+                    {t('style_tryAgain')}
                   </button>
                 </div>
               </>

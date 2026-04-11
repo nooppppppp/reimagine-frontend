@@ -9,6 +9,7 @@ import {
   FolderOpen,
   Save
 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 type ViewMode = 'after' | 'comparison';
 
@@ -29,6 +30,7 @@ interface ResultState {
 export function DesignResult() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, lang, toggleLang } = useLanguage();
   const state = location.state as ResultState | null;
   const [viewMode, setViewMode] = useState<ViewMode>('after');
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -90,7 +92,7 @@ export function DesignResult() {
               <Home className="w-5 h-5" />
             </button>
             <div className="h-6 w-px bg-stone-300"></div>
-            <h1 className="text-xl text-stone-900">Design Result</h1>
+            <h1 className="text-xl text-stone-900">{t('result_title')}</h1>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -98,13 +100,19 @@ export function DesignResult() {
               className="flex items-center gap-2 px-4 py-2 text-stone-700 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
             >
               <FolderOpen className="w-5 h-5" />
-              <span>My Projects</span>
+              <span>{t('nav_myProjects')}</span>
             </button>
             <button
               onClick={() => navigate('/style-selection')}
               className="px-4 py-2 bg-stone-800 text-white rounded-lg hover:bg-stone-700 transition-colors"
             >
-              New Design
+              {t('nav_newDesign')}
+            </button>
+            <button
+              onClick={toggleLang}
+              className="flex items-center gap-1.5 px-3 py-1.5 border border-stone-300 rounded-lg text-sm text-stone-600 hover:text-stone-900 hover:border-stone-400 hover:bg-stone-50 transition-colors"
+            >
+              {lang === 'en' ? 'TH' : 'EN'}
             </button>
           </div>
         </div>
@@ -116,7 +124,7 @@ export function DesignResult() {
           {/* User Guidance Text */}
           <div className="bg-stone-100 border border-stone-200 rounded-xl px-6 py-4">
             <p className="text-stone-700 text-center">
-              You can regenerate the design with a different style or download the result.
+              {t('result_guidance')}
             </p>
           </div>
 
@@ -126,7 +134,7 @@ export function DesignResult() {
               // Single Image View
               <div className="relative">
                 <div className="aspect-video bg-stone-200">
-                  <img 
+                  <img
                     src={afterImage}
                     alt="Generated design"
                     className="w-full h-full object-cover"
@@ -139,7 +147,7 @@ export function DesignResult() {
                       onClick={() => setViewMode('comparison')}
                       className="bg-white/95 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg hover:bg-white transition-colors text-sm text-stone-700 border border-stone-300"
                     >
-                      Show Comparison
+                      {t('result_showComparison')}
                     </button>
                   )}
                   <button
@@ -153,7 +161,7 @@ export function DesignResult() {
                 {/* Resolution Note */}
                 <div className="absolute bottom-4 left-4">
                   <div className="bg-black/60 backdrop-blur-sm px-3 py-2 rounded-lg">
-                    <p className="text-white text-sm">Generated image resolution: 1024×1024</p>
+                    <p className="text-white text-sm">{t('result_resolution')}</p>
                   </div>
                 </div>
               </div>
@@ -162,7 +170,7 @@ export function DesignResult() {
               <div className="grid md:grid-cols-2 gap-0">
                 <div className="relative">
                   <div className="aspect-video bg-stone-200">
-                    <img 
+                    <img
                       src={beforeImage}
                       alt="Before"
                       className="w-full h-full object-cover"
@@ -170,7 +178,7 @@ export function DesignResult() {
                   </div>
                   <div className="absolute top-4 left-4">
                     <div className="bg-stone-800 text-white px-3 py-1 rounded-lg text-sm">
-                      Before
+                      {t('result_before')}
                     </div>
                   </div>
                 </div>
@@ -184,7 +192,7 @@ export function DesignResult() {
                   </div>
                   <div className="absolute top-4 left-4">
                     <div className="bg-stone-800 text-white px-3 py-1 rounded-lg text-sm">
-                      After
+                      {t('result_after')}
                     </div>
                   </div>
                   <div className="absolute top-4 right-4">
@@ -192,7 +200,7 @@ export function DesignResult() {
                       onClick={() => setViewMode('after')}
                       className="bg-white/95 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg hover:bg-white transition-colors text-sm text-stone-700 border border-stone-300"
                     >
-                      Hide Comparison
+                      {t('result_hideComparison')}
                     </button>
                   </div>
                 </div>
@@ -208,7 +216,7 @@ export function DesignResult() {
                 className="flex items-center justify-center gap-2 px-4 py-3 bg-stone-800 text-white rounded-xl hover:bg-stone-700 transition-colors"
               >
                 <Save className="w-5 h-5" />
-                <span>Save Project</span>
+                <span>{t('result_saveProject')}</span>
               </button>
 
               <button
@@ -216,7 +224,7 @@ export function DesignResult() {
                 className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-stone-300 text-stone-700 rounded-xl hover:border-stone-400 hover:bg-stone-50 transition-colors"
               >
                 <Palette className="w-5 h-5" />
-                <span>Change Style</span>
+                <span>{t('result_changeStyle')}</span>
               </button>
 
               <button
@@ -224,7 +232,7 @@ export function DesignResult() {
                 className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-stone-300 text-stone-700 rounded-xl hover:border-stone-400 hover:bg-stone-50 transition-colors"
               >
                 <Download className="w-5 h-5" />
-                <span>Download</span>
+                <span>{t('result_download')}</span>
               </button>
             </div>
           </div>
@@ -240,7 +248,7 @@ export function DesignResult() {
           >
             <X className="w-6 h-6 text-white" />
           </button>
-          <img 
+          <img
             src={afterImage}
             alt="Fullscreen preview"
             className="max-w-full max-h-full object-contain"

@@ -1,29 +1,32 @@
 import { Upload, Palette, Sparkles } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export function Steps() {
+  const { t } = useLanguage();
+
   const steps = [
     {
       icon: Upload,
-      title: "Upload your room photo",
-      description: "Take a photo of your current room or space you want to redesign"
+      title: t('steps_step1_title'),
+      description: t('steps_step1_desc'),
     },
     {
       icon: Palette,
-      title: "Choose inspiration or style",
-      description: "Select from various design styles or upload inspiration images"
+      title: t('steps_step2_title'),
+      description: t('steps_step2_desc'),
     },
     {
       icon: Sparkles,
-      title: "Generate your new design",
-      description: "Let AI create beautiful, personalized design options for your space"
-    }
+      title: t('steps_step3_title'),
+      description: t('steps_step3_desc'),
+    },
   ];
 
   return (
     <section className="w-full bg-stone-50 py-20">
       <div className="max-w-7xl mx-auto px-6">
         <h2 className="text-4xl text-center text-stone-900 mb-16">
-          Make your space yours — in 3 simple steps
+          {t('steps_title')}
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
           {steps.map((step, index) => (

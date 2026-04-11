@@ -10,11 +10,13 @@ import {
   Trash2,
   FolderOpen
 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 type SortOption = 'recent' | 'oldest';
 
 export function MyProjects() {
   const navigate = useNavigate();
+  const { t, lang, toggleLang } = useLanguage();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loadError, setLoadError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -26,7 +28,7 @@ export function MyProjects() {
   useEffect(() => {
     getProjects()
       .then(data => setProjects(data))
-      .catch(() => setLoadError('Could not load projects. Make sure the backend is running.'));
+      .catch(() => setLoadError(t('myprojects_loadError')));
   }, []);
 
   const handleViewProject = (project: Project) => {
@@ -99,22 +101,30 @@ export function MyProjects() {
               <Home className="w-5 h-5" />
             </button>
             <div className="h-6 w-px bg-stone-300"></div>
-            <h1 className="text-xl text-stone-900">My Projects</h1>
+            <h1 className="text-xl text-stone-900">{t('myprojects_title')}</h1>
           </div>
-          <button
-            onClick={() => navigate('/style-selection')}
-            className="flex items-center gap-2 bg-stone-800 text-white px-6 py-3 rounded-full hover:bg-stone-700 transition-colors shadow-lg hover:shadow-xl"
-          >
-            <Plus className="w-5 h-5" />
-            New Design
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/style-selection')}
+              className="flex items-center gap-2 bg-stone-800 text-white px-6 py-3 rounded-full hover:bg-stone-700 transition-colors shadow-lg hover:shadow-xl"
+            >
+              <Plus className="w-5 h-5" />
+              {t('nav_newDesign')}
+            </button>
+            <button
+              onClick={toggleLang}
+              className="flex items-center gap-1.5 px-3 py-1.5 border border-stone-300 rounded-lg text-sm text-stone-600 hover:text-stone-900 hover:border-stone-400 hover:bg-stone-50 transition-colors"
+            >
+              {lang === 'en' ? 'TH' : 'EN'}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8">
-          <p className="text-[15px] text-stone-600">View and manage your previous room designs.</p>
+          <p className="text-[15px] text-stone-600">{t('myprojects_subtitle')}</p>
         </div>
 
         {loadError && (
@@ -126,14 +136,14 @@ export function MyProjects() {
         {projects.length === 0 && !loadError ? (
           <div className="bg-white rounded-2xl shadow-lg p-16 text-center">
             <FolderOpen className="w-16 h-16 text-stone-400 mx-auto mb-4" />
-            <h2 className="text-[24px] text-stone-900 mb-2">You don't have any projects yet.</h2>
-            <p className="text-[15px] text-stone-600 mb-6">Start creating beautiful room designs with AI.</p>
+            <h2 className="text-[24px] text-stone-900 mb-2">{t('myprojects_empty_title')}</h2>
+            <p className="text-[15px] text-stone-600 mb-6">{t('myprojects_empty_subtitle')}</p>
             <button
               onClick={() => navigate('/style-selection')}
               className="inline-flex items-center gap-2 bg-stone-800 text-white px-8 py-4 rounded-full hover:bg-stone-700 transition-colors shadow-lg hover:shadow-xl"
             >
               <Plus className="w-5 h-5" />
-              Create Your First Design
+              {t('myprojects_empty_cta')}
             </button>
           </div>
         ) : (
@@ -146,7 +156,7 @@ export function MyProjects() {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
                   <input
                     type="text"
-                    placeholder="Search projects..."
+                    placeholder={t('myprojects_search')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-400 focus:border-transparent text-[15px] placeholder:text-[13px]"
@@ -158,7 +168,7 @@ export function MyProjects() {
                     onChange={(e) => setActiveRoomFilter(e.target.value || null)}
                     className="appearance-none pl-4 pr-10 py-2.5 border border-stone-300 rounded-xl text-[14px] text-stone-700 focus:outline-none focus:ring-2 focus:ring-stone-400 bg-white w-full"
                   >
-                    <option value="">All Room Types</option>
+                    <option value="">{t('myprojects_allRoomTypes')}</option>
                     {availableRooms.map(room => (
                       <option key={room} value={room}>{room}</option>
                     ))}
@@ -173,7 +183,7 @@ export function MyProjects() {
                     onChange={(e) => setActiveStyleFilter(e.target.value || null)}
                     className="appearance-none pl-4 pr-10 py-2.5 border border-stone-300 rounded-xl text-[14px] text-stone-700 focus:outline-none focus:ring-2 focus:ring-stone-400 bg-white w-full"
                   >
-                    <option value="">All Styles</option>
+                    <option value="">{t('myprojects_allStyles')}</option>
                     {availableStyles.map(style => (
                       <option key={style} value={style}>{style}</option>
                     ))}
@@ -185,14 +195,14 @@ export function MyProjects() {
               </div>
               {/* Row 2: Sort */}
               <div className="flex items-center gap-2">
-                <span className="text-[14px] text-stone-600">Sort by:</span>
+                <span className="text-[14px] text-stone-600">{t('myprojects_sortBy')}</span>
                 <button
                   onClick={() => setSortBy('recent')}
                   className={`px-3 py-1 rounded-lg text-[14px] transition-colors ${
                     sortBy === 'recent' ? 'bg-stone-800 text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
                   }`}
                 >
-                  Recent
+                  {t('myprojects_recent')}
                 </button>
                 <button
                   onClick={() => setSortBy('oldest')}
@@ -200,7 +210,7 @@ export function MyProjects() {
                     sortBy === 'oldest' ? 'bg-stone-800 text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
                   }`}
                 >
-                  Oldest
+                  {t('myprojects_oldest')}
                 </button>
               </div>
             </div>
@@ -266,7 +276,7 @@ export function MyProjects() {
             {filteredProjects.length === 0 && (
               <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
                 <Search className="w-12 h-12 text-stone-400 mx-auto mb-4" />
-                <p className="text-[15px] text-stone-600">No projects found matching your search.</p>
+                <p className="text-[15px] text-stone-600">{t('myprojects_noResults')}</p>
               </div>
             )}
           </>
@@ -277,22 +287,22 @@ export function MyProjects() {
       {projectToDelete && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-6">
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
-            <h2 className="text-[24px] text-stone-900 mb-4">Clear All History?</h2>
+            <h2 className="text-[24px] text-stone-900 mb-4">{t('myprojects_clearHistory')}</h2>
             <p className="text-[15px] text-stone-600 mb-6">
-              This will delete all generated designs. This action cannot be undone.
+              {t('myprojects_clearHistoryDesc')}
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setProjectToDelete(null)}
                 className="flex-1 px-4 py-3 border-2 border-stone-300 text-stone-700 rounded-xl hover:border-stone-400 hover:bg-stone-50 transition-colors text-[15px]"
               >
-                Cancel
+                {t('myprojects_cancel')}
               </button>
               <button
                 onClick={confirmDelete}
                 className="flex-1 px-4 py-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors text-[15px]"
               >
-                Delete
+                {t('myprojects_delete')}
               </button>
             </div>
           </div>

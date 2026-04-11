@@ -1,21 +1,24 @@
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Link } from 'react-router';
+import { useLanguage } from '../context/LanguageContext';
 
 export function Hero() {
+  const { t } = useLanguage();
+
   return (
     <section className="w-full bg-gradient-to-b from-white to-stone-50">
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <h1 className="text-5xl text-stone-900 leading-tight">
-              Reimagine Your Room with AI
+              {t('hero_title')}
             </h1>
             <p className="text-xl text-stone-600">
-              Upload your room and inspiration images to instantly generate a personalized interior design.
+              {t('hero_subtitle')}
             </p>
             <Link to="/style-selection">
               <button className="bg-stone-800 text-white px-8 py-4 rounded-full hover:bg-stone-700 transition-colors shadow-lg hover:shadow-xl">
-                Design My Room
+                {t('hero_cta')}
               </button>
             </Link>
           </div>
